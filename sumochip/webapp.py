@@ -87,7 +87,7 @@ def command(ws):
                 print(fullCodeText)
                 codeBytecode = compile(codeText, "<SumorobotCode>", "exec")
         elif command == 'executeCode':
-            if 'fullCodeText' in globals():
+            if 'fullCodeText' in locals():
                 if codeThread:
                     codeThread.running = False
                 slave = {}
