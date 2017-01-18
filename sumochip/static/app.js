@@ -55,6 +55,10 @@ function wsConnect() {
     socket.onmessage = function(event){
         var msg = JSON.parse(event.data);
         console.log(msg);
+        if(msg.Error) {
+            console.log(msg.Error);
+        }
+
         if (msg.savedCode) {   
             switchToCodemirror();
             codemirror.setValue(msg.savedCode);

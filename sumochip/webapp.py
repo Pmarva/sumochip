@@ -7,6 +7,7 @@ from time import sleep
 import imp
 import json
 import os
+import ast
 
 codeTemplate = """
 from threading import Thread
@@ -86,14 +87,17 @@ def command(ws):
                 print(fullCodeText)
                 codeBytecode = compile(codeText, "<SumorobotCode>", "exec")
         elif command == 'executeCode':
-            if codeThread:
-                codeThread.running = False
-            slave = {}
-            exec(codeBytecode, slave)
-            codeThread = slave["AutonomousThread"](sumorobot)
-            codeThread.daemon = True
-            codeThread.start()
-            sumorobot.sensor_power = True
+            if 'fullCodeText' in globals():
+                if codeThread:
+                    codeThread.running = False
+                slave = {}
+                exec(codeBytecode, slave)
+                codeThread = slave["AutonomousThread"](sumorobot)
+                codeThread.daemon = True
+                codeThread.start()
+                sumorobot.sensor_power = True
+            else:
+                ws.send(json.dumps({'Error':'Koodi ei ole salvestatud'}))
         elif command == 'stopCode':
             if codeThread:
                 codeThread.running = False
@@ -105,10 +109,22 @@ def command(ws):
             with open("code.txt", "w") as fh:
                 fh.write(str(command))
             codeText = str(command)
-            fullCodeText = codeTemplate + "".join((" "*8 + line + "\n" for line in codeText.split("\n")))
-            print(fullCodeText)
-            codeBytecode = compile(fullCodeText, "<SumorobotCode>", "exec")
-            print('Saved')
+            print("Kood scratch:" +codeText)
+
+            if len(codeText) > 0:
+                fullCodeText = codeTemplate + "".join((" "*8 + line + "\n" for line in codeText.split("\n")))
+                print("Kood "+fullCodeText)
+                print("Koodi pikkus: "+str(len(fullCodeText)))
+                try:
+                    print("####RUNNING#####")
+                
+                    codeBytecode = compile(fullCodeText, "<SumorobotCode>", "exec")
+                    test = compile(fullCodeText, "<SumorobotCode>", "exec", ast.PyCF_ONLY_AST)
+                    print('Saved')
+                except TypeError:
+                    print("######ERRRROR########")
+            else:
+                ws.send(json.dumps({'Error':'Do not send empty stuff'}))
 
 
 def main():
