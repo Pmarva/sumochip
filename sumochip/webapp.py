@@ -36,6 +36,7 @@ sumorobot = Sumorobot()
 codeThread = None
 codeText = ""
 codeBytecode = None
+codeSaved = False
 
 app = Flask(__name__)
 try:
@@ -87,7 +88,7 @@ def command(ws):
                 print(fullCodeText)
                 codeBytecode = compile(codeText, "<SumorobotCode>", "exec")
         elif command == 'executeCode':
-            if 'fullCodeText' in locals():
+            if codeSaved:
                 if codeThread:
                     codeThread.running = False
                 slave = {}
@@ -103,6 +104,8 @@ def command(ws):
                 codeThread.running = False
             print("code execution stopped")
             sumorobot.sensor_power = False
+        elif command == None:
+            print("WTF")
         else:
             print("Code to be saved:")
             print(command)
@@ -121,10 +124,13 @@ def command(ws):
                     codeBytecode = compile(fullCodeText, "<SumorobotCode>", "exec")
                     test = compile(fullCodeText, "<SumorobotCode>", "exec", ast.PyCF_ONLY_AST)
                     print('Saved')
+                    codeSaved = True
                 except TypeError:
                     print("######ERRRROR########")
             else:
+                codeSaved = False
                 ws.send(json.dumps({'Error':'Do not send empty stuff'}))
+
 
 
 def main():

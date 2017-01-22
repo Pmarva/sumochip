@@ -16,6 +16,9 @@ position = {
     RIGHT : 'right'
 }
 
+
+//var timer = 0;
+
 init();
 
 function init() {
@@ -121,7 +124,7 @@ window.onkeydown = function(e) {
         else if (key == 37)
             move(direction.LEFT);
         else if (key == 39)
-            move(direction.RIGHT);   
+            move(direction.RIGHT);
     }   
 };
 window.onkeyup = function(e) {
@@ -172,8 +175,15 @@ function setOnClickFunctions() {
 
 // nuppude korral websocket message serverile
 function move(command) {
-    socket.send(command);
+    //if(performance.now()-timer > 300 || command == 0) {
+        socket.send(command);
+        
+//        if(command!=0) {
+//            timer = performance.now();
+//        }
+    //}
 };
+
 function stop(){
     move(direction.STOP);
 };

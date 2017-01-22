@@ -8,6 +8,7 @@ from axp209 import AXP209
 from time import sleep
 from threading import Thread
 import json
+import os.path
 
 if sys.version_info[0] < 3:
     from ConfigParser import SafeConfigParser as ConfigParser
@@ -49,30 +50,30 @@ class AttributeDict(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
 
-class ChipIOMotor(object):
-    _speed = 0
+#class ChipIOMotor(object):
+#    _speed = 0
 
-    def __init__(self, pin, freq=50, duty_min=5, duty_max=10, stop_on_zero=False):
-        self.pin = pin
-        self.freq = freq
-        self.duty_min = duty_min
-        self.duty_max = duty_max
-        self.stop_on_zero = stop_on_zero
-        sleep(0.1)
-        PWM.start(pin, 0, freq)
+#    def __init__(self, pin, freq=50, duty_min=5, duty_max=10, stop_on_zero=False):
+#        self.pin = pin
+#        self.freq = freq
+#        self.duty_min = duty_min
+#        self.duty_max = duty_max
+#        self.stop_on_zero = stop_on_zero
+#        sleep(0.1)
+#        PWM.start(pin, 0, freq)
 
-    @property
-    def speed(self):
-        return self._speed
+#    @property
+#    def speed(self):
+#        return self._speed
 
-    @speed.setter
-    def speed(self, val):
-        self._speed = val
-        if val == 0 and not self.stop_on_zero:
-            duty = 0
-        else:
-            duty = int(map(val, -1.0, 1.0, self.duty_min, self.duty_max))
-        PWM.set_duty_cycle(self.pin, duty)
+#    @speed.setter
+#    def speed(self, val):
+#        self._speed = val
+#        if val == 0 and not self.stop_on_zero:
+#            duty = 0
+#        else:
+#            duty = int(map(val, -1.0, 1.0, self.duty_min, self.duty_max))
+#        PWM.set_duty_cycle(self.pin, duty)
 
 
 class ChipIOPin(object):
@@ -143,31 +144,31 @@ class NoIOPin(object):
     value = 0
 
 
-class PythonIOMotor(Thread): # This class generated PWM signal necessary for servo motors
-    def __init__(self, pin=192):
-        Thread.__init__(self)
-        self.path = "/sys/class/gpio/gpio{}".format(pin)
-        if not os.path.exists(self.path):
-            with open("/sys/class/gpio/export", "w") as fh:
-                fh.write(str(pin))
-        with open(os.path.join(self.path, "direction"), "w") as fh:
-            fh.write("out")
-        self.speed = 0
-        self.daemon = True
-        self.start()
-    def run(self):
-        print("run")
-        with open(os.path.join(self.path, "value"), "w") as fh:
-          while True:
-            if self.speed:
-                fh.write("1")
-                fh.flush()
-                sleep(0.002 if self.speed > 0 else 0.001)
-                fh.write("0")
-                fh.flush()
-                sleep(0.018 if self.speed > 0 else 0.019)
-            else:
-                sleep(0.020)
+#class PythonIOMotor(Thread): # This class generated PWM signal necessary for servo motors
+#    def __init__(self, pin=192):
+#        Thread.__init__(self)
+#        self.path = "/sys/class/gpio/gpio{}".format(pin)
+#        if not os.path.exists(self.path):
+#            with open("/sys/class/gpio/export", "w") as fh:
+#                fh.write(str(pin))
+#        with open(os.path.join(self.path, "direction"), "w") as fh:
+#            fh.write("out")
+#        self.speed = 0
+#        self.daemon = True
+#        self.start()
+#    def run(self):
+#        print("run")
+#        with open(os.path.join(self.path, "value"), "w") as fh:
+#          while True:
+#            if self.speed:
+#                fh.write("1")
+#                fh.flush()
+#                sleep(0.002 if self.speed > 0 else 0.001)
+#                fh.write("0")
+#                fh.flush()
+#                sleep(0.018 if self.speed > 0 else 0.019)
+#            else:
+#                sleep(0.020)
 
 class IOPollThread(Thread):
     """Polls the IO pins"""
@@ -226,6 +227,7 @@ class Sumorobot(object):
                 config_file = "/etc/sumorobot/sumorobot.ini"
             if os.path.exists("sumorobot.ini"):
                 config_file = "sumorobot.ini"
+       
 
         if not config_file:
             raise ConfigFileNotFound("No config files found")
@@ -269,24 +271,26 @@ class Sumorobot(object):
 
             if "motor_left" in chip_io_pins:
                 unexport(config.get("PythonIO", "motor_left"))
-                try:
-                    freq, duty_min, duty_max = config.get("ChipIO", "motor_left_cal").split(",")
-                except NoOptionError:
-                    freq, duty_min, duty_max = 500, 49, 90
+#                try:
+#                    freq, duty_min, duty_max = config.get("ChipIO", "motor_left_cal").split(",")
+#                except NoOptionError:
+#                    freq, duty_min, duty_max = 500, 49, 90
 
-                self.motor_left = ChipIOMotor(config.get("ChipIO", "motor_left"),
-                                             int(freq), float(duty_min), float(duty_max),
-                                             stop_on_zero)
+#                self.motor_left = ChipIOMotor(config.get("ChipIO", "motor_left"),
+#                                             int(freq), float(duty_min), float(duty_max),
+#                                             stop_on_zero)
+                self.motor_left = config.get("ChipIO", "motor_left")
                 chip_io_pins.remove("motor_left")
             if "motor_right" in chip_io_pins:
                 unexport(config.get("PythonIO", "motor_right"))
-                try:
-                    freq, duty_min, duty_max = config.get("ChipIO", "motor_right_cal").split(",")
-                except NoOptionError:
-                    freq, duty_min, duty_max = 500, 49, 90
-                self.motor_right = ChipIOMotor(config.get("ChipIO", "motor_right"),
-                                            int(freq), float(duty_min), float(duty_max),
-                                            stop_on_zero)
+#                try:
+#                    freq, duty_min, duty_max = config.get("ChipIO", "motor_right_cal").split(",")
+#                except NoOptionError:
+#                    freq, duty_min, duty_max = 500, 49, 90
+#                self.motor_right = ChipIOMotor(config.get("ChipIO", "motor_right"),
+#                                            int(freq), float(duty_min), float(duty_max),
+#                                            stop_on_zero)
+                self.motor_right = config.get("ChipIO", "motor_right")
                 chip_io_pins.remove("motor_right")
 
             for pin_name in chip_io_pins:
@@ -305,13 +309,13 @@ class Sumorobot(object):
             print("PythonIO pins: ", ", ".join(str(pin) for pin in python_io_pins))
             non_python_io_pins = non_chip_io_pins - python_io_pins
 
-            if "motor_left" in python_io_pins:
-                self.motor_left = PythonIOMotor(config.get("PythonIO", "motor_left"))
-                python_io_pins.remove("motor_left")
+#            if "motor_left" in python_io_pins:
+#                self.motor_left = PythonIOMotor(config.get("PythonIO", "motor_left"))
+#                python_io_pins.remove("motor_left")
 
-            if "motor_right" in python_io_pins:
-                self.motor_right = PythonIOMotor(config.get("PythonIO", "motor_right"))
-                python_io_pins.remove("motor_right")
+#            if "motor_right" in python_io_pins:
+#                self.motor_right = PythonIOMotor(config.get("PythonIO", "motor_right"))
+#                python_io_pins.remove("motor_right")
 
             for pin_name in python_io_pins:
                 self.io[pin_name] = PythonIOPin(config.get("PythonIO", pin_name))
@@ -340,10 +344,24 @@ class Sumorobot(object):
         print("NoIO pins: ", ", ".join(str(pin) for pin in unconfigured_pins))
 
         from pprint import pprint
-        print("{:<15}: {}".format("motor_left", type(self.motor_left).__name__))
-        print("{:<15}: {}".format("motor_right", type(self.motor_right).__name__))
+        #print("{:<15}: {}".format("motor_left", type(self.motor_left).__name__))
+        #print("{:<15}: {}".format("motor_right", type(self.motor_right).__name__))
         for name, pin in self.io.items():
             print("{:<15}: {}".format(name, type(pin).__name__))
+
+
+        location = os.path.dirname(os.path.realpath(__file__))
+        os.system('nice -n 20 ionice -n 1 python '+location+'/servos.py '+self.motor_right+' '+self.motor_left+' &')
+        sleep(1)
+
+        if os.path.exists("/var/tmp/sumoServoPid.txt"):
+            with open('/var/tmp/sumoServoPid.txt', 'r') as f:
+                self.sumoServoPid = int(f.readline())
+        
+        if not os.path.exists('/proc/'+str(self.sumoServoPid)):
+            raise IOError("proccess not found "+str(self.sumoServoPid))
+
+
 
     def __getattr__(self, name):
         if name in self.io_proxies:
@@ -355,20 +373,30 @@ class Sumorobot(object):
 
 
     def forward(self):
-        self.motor_left.speed = 1
-        self.motor_right.speed = -1
+#        self.motor_left.speed = 1
+#        self.motor_right.speed = -1
+        os.kill(self.sumoServoPid,30)
+        #os.kill(self.sumoServoPid,31)
     def back(self):
-        self.motor_left.speed = -1
-        self.motor_right.speed = 1
+#        self.motor_left.speed = -1
+#        self.motor_right.speed = 1
+        os.kill(self.sumoServoPid,10)
+        #os.kill(self.sumoServoPid,12)
     def stop(self):
-        self.motor_left.speed = 0
-        self.motor_right.speed = 0
+#        self.motor_left.speed = 0
+#        self.motor_right.speed = 0
+        os.kill(self.sumoServoPid,16)
+        #os.kill(self.sumoServoPid,17)
     def right(self):
-        self.motor_left.speed = 1
-        self.motor_right.speed = 1
+#        self.motor_left.speed = 1
+#        self.motor_right.speed = 1
+        #os.kill(self.sumoServoPid,10)
+        os.kill(self.sumoServoPid,31)
     def left(self):
-        self.motor_left.speed = -1
-        self.motor_right.speed = -1
+#        self.motor_left.speed = -1
+#        self.motor_right.speed = -1
+        #os.kill(self.sumoServoPid,30)
+        os.kill(self.sumoServoPid,12)
 
     @property
     def sensor_power(self):
@@ -422,7 +450,10 @@ class SensorThread(Thread):
         while True:
             if self.ws and not self.ws.closed:
                 self.ws.send(json.dumps(self.getData()))
-                sleep(0.2)
+                sleep(0.5)
+            else:
+                print("Loop ended")
+                break
 
     def getData(self):
         stats = {}
@@ -509,7 +540,7 @@ def self_test(s):
     s.motor_left.speed = 0
 
     print("motor_right test")
-    for x in range(-100, 100, 2):
+    for x in range(-100, 100, 2 ):
         s.motor_right.speed = x/100.0
         print(x, end="   \r")
         sys.stdout.flush()
