@@ -27,13 +27,13 @@ LEFT = "LCD-D23"
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
 
-#def unexport(pin):
-#    if os.path.exists("/sys/class/gpio/gpio{}".format(pin)):
-#        with open("/sys/class/gpio/unexport", "w") as fh:
-#                fh.write(str(pin))
+def unexport(pin):
+    if os.path.exists("/sys/class/gpio/gpio{}".format(pin)):
+        with open("/sys/class/gpio/unexport", "w") as fh:
+                fh.write(str(pin))
 
-#unexport(120)
-#unexport(119)
+unexport(120)
+unexport(119)
 
 PWM.start(RIGHT, 0, 50) #parem ratas
 PWM.start(LEFT, 0, 50) #vasak ratas
