@@ -104,6 +104,13 @@ def command(ws):
                 codeThread.running = False
             print("code execution stopped")
             sumorobot.sensor_power = False
+        elif command == 'shutDown':
+            if codeThread:
+                codeThread.running = False
+            print("code execution stopped")
+            sumorobot.sensor_power = False
+            os.system("poweroff")
+            print("Robot suletakse")
         elif command == None:
             print("WTF")
         else:

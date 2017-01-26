@@ -8,6 +8,7 @@ echo $HOSTNAME > /etc/hostname
 hostname -F /etc/hostname
 echo "Hostname set to $HOSTNAME"
 
+mkdir -p /etc/sumorobot
 cat > /etc/sumorobot/sumorobot.ini << EOF
 [webapp]
 host = 0.0.0.0
@@ -20,14 +21,14 @@ axp209 = 0
 motor_stop_on_zero_speed = false
 motor_left_cal =  50, 1, 8
 motor_right_cal = 50, 1, 8
-motor_left = LCD-D23
-motor_right = LCD-CLK
+#motor_left = LCD-D23
+#motor_right = LCD-CLK
 enemy_left = CSID3
 enemy_right = CSID5
 
 [PythonIO]
-motor_left = 119
-motor_right = 120
+#motor_left = 119
+#motor_right = 120
 sensor_power = 122
 enemy_left = 135
 enemy_right = 137
@@ -54,11 +55,35 @@ esac
 echo "Configuration file generated at /etc/sumochip/sumochip.conf"
 
 
+cat > /lib/systemd/system/sumochip-servo.service << EOF
+[Unit]
+Description=Servo controlling for sumorobot.
+AssertPathExists=/etc/sumorobot/sumorobot.ini
+
+[Service]
+Environment = PYTHONUNBUFFERED=true
+ExecStart=/usr/local/bin/sumochip-servo
+Nice=-20
+IOSchedulingClass=realtime
+IOSchedulingPriority=0
+#CPUSchedulingPolicy=rr
+#CPUSchedulingPriority=99
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target 
+EOF
+
+
 cat > /lib/systemd/system/sumochip.service << EOF
 [Unit]
 Description=SumoCHIP web interface
 Documentation=https://github.com/laurivosandi/sumochip
 AssertPathExists=/etc/sumorobot/sumorobot.ini
+After=sumochip-servo.service
+Requires=sumochip-servo.service
+
 
 [Service]
 Environment=PYTHONUNBUFFERED=true
@@ -76,6 +101,9 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
+systemctl enable sumochip-servo
+
+
 systemctl enable sumochip
 systemctl restart sumochip
 

@@ -23,7 +23,7 @@ setup(
         "flask-sockets",
         "pid"
     ],
-    scripts=["bin/sumochip-setup"],
+    scripts=["bin/sumochip-setup","bin/sumochip-servo"],
     include_package_data = True,
     entry_points={'console_scripts': ['sumochip-web = sumochip.webapp:main', 'sumochip-test = sumochip.sumorobot:main']},
     classifiers=[

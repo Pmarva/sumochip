@@ -213,6 +213,12 @@ function stopCode() {
     socket.send('stopCode');
 }
 
+function shutDown() {
+    if(confirm("Kas soovite roboti sulgeda?")) {
+        socket.send('shutDown');
+    }
+}
+
 
 function switchToBlockly() {
     document.getElementById("blockly").style.display = "initial";

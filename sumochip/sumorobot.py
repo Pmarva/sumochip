@@ -25,9 +25,7 @@ except ImportError:
     __use_chip_io__ = False
 
 
-VALID_PINS = {"motor_left",
-              "motor_right",
-              "sensor_power",
+VALID_PINS = {"sensor_power",
               "enemy_left",
               "enemy_right",
               "line_left",
@@ -254,6 +252,7 @@ class Sumorobot(object):
                 self.axp209 = AXP209(i2c_bus)
             else:
                 self.axp209 = None
+            self.lineColor = config.getint("sumorobot", "blackLine")
 
 
         if "ChipIO" in config.sections() and (__use_chip_io__ or force_use_chip_io):
@@ -269,8 +268,8 @@ class Sumorobot(object):
             except NoOptionError:
                 stop_on_zero = False
 
-            if "motor_left" in chip_io_pins:
-                unexport(config.get("PythonIO", "motor_left"))
+#            if "motor_left" in chip_io_pins:
+#                unexport(config.get("PythonIO", "motor_left"))
 #                try:
 #                    freq, duty_min, duty_max = config.get("ChipIO", "motor_left_cal").split(",")
 #                except NoOptionError:
@@ -279,10 +278,10 @@ class Sumorobot(object):
 #                self.motor_left = ChipIOMotor(config.get("ChipIO", "motor_left"),
 #                                             int(freq), float(duty_min), float(duty_max),
 #                                             stop_on_zero)
-                self.motor_left = config.get("ChipIO", "motor_left")
-                chip_io_pins.remove("motor_left")
-            if "motor_right" in chip_io_pins:
-                unexport(config.get("PythonIO", "motor_right"))
+#                self.motor_left = config.get("ChipIO", "motor_left")
+#                chip_io_pins.remove("motor_left")
+#            if "motor_right" in chip_io_pins:
+#                unexport(config.get("PythonIO", "motor_right"))
 #                try:
 #                    freq, duty_min, duty_max = config.get("ChipIO", "motor_right_cal").split(",")
 #                except NoOptionError:
@@ -290,8 +289,8 @@ class Sumorobot(object):
 #                self.motor_right = ChipIOMotor(config.get("ChipIO", "motor_right"),
 #                                            int(freq), float(duty_min), float(duty_max),
 #                                            stop_on_zero)
-                self.motor_right = config.get("ChipIO", "motor_right")
-                chip_io_pins.remove("motor_right")
+#                self.motor_right = config.get("ChipIO", "motor_right")
+#                chip_io_pins.remove("motor_right")
 
             for pin_name in chip_io_pins:
                 unexport(config.get("PythonIO", pin_name))
@@ -350,9 +349,9 @@ class Sumorobot(object):
             print("{:<15}: {}".format(name, type(pin).__name__))
 
 
-        location = os.path.dirname(os.path.realpath(__file__))
-        os.system('nice -n 20 ionice -n 1 python '+location+'/servos.py '+self.motor_right+' '+self.motor_left+' &')
-        sleep(1)
+        #location = os.path.dirname(os.path.realpath(__file__))
+        #os.system('nice -n -20 ionice -n 0 python '+location+'/servos.py '+self.motor_right+' '+self.motor_left+' &')
+        #sleep(1)
 
         if os.path.exists("/var/tmp/sumoServoPid.txt"):
             with open('/var/tmp/sumoServoPid.txt', 'r') as f:
@@ -431,11 +430,14 @@ class Sumorobot(object):
 
     def isLine(self, value):
         if value == 'LEFT':
-            return not self.line_left.value
+            return (not self.line_left.value) ^ self.lineColor
         elif value == 'RIGHT':
-            return not self.line_right.value
+            return (not self.line_right.value) ^ self.lineColor
         elif value == 'FRONT':
-            return not self.line_front.value
+            test = not self.line_front.value ^ self.lineColor
+            #test = (not self.line_front.value) ^ self.lineColor
+            print("Ees joone j22rtus: "+str(test))
+            return test
 
 
 
@@ -452,7 +454,7 @@ class SensorThread(Thread):
                 self.ws.send(json.dumps(self.getData()))
                 sleep(0.5)
             else:
-                print("Loop ended")
+                print("Websocket closed")
                 break
 
     def getData(self):
@@ -465,9 +467,9 @@ class SensorThread(Thread):
 
         right = not s.enemy_right.value
         left = not s.enemy_left.value
-        line_right = not s.line_right.value
-        line_front = not s.line_front.value
-        line_left = not s.line_left.value
+        line_right = (not s.line_right.value) ^ s.lineColor
+        line_front = (not s.line_front.value) ^ s.lineColor
+        line_left = (not s.line_left.value) ^ s.lineColor
 
         s.blue_led.value = not left
         s.green_led.value = not right

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from CHIP_IO import GPIO
 from CHIP_IO import SOFTPWM as PWM
 import sys
@@ -44,20 +46,20 @@ PWM.start(LEFT, 0, 50) #vasak ratas
 #def stop2(signum, frame): PWM.set_duty_cycle("LCD-D23", 0)
 
 def forward(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 5)
+    PWM.set_duty_cycle(RIGHT, 3)
     PWM.set_duty_cycle(LEFT, 10)
 
 def backward(signum, frame):
     PWM.set_duty_cycle(RIGHT, 10)
-    PWM.set_duty_cycle(LEFT, 5)
+    PWM.set_duty_cycle(LEFT, 3)
 
 def stop(signum, frame):
     PWM.set_duty_cycle(RIGHT, 0)
     PWM.set_duty_cycle(LEFT, 0)
 
 def left(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 5)
-    PWM.set_duty_cycle(LEFT, 5)
+    PWM.set_duty_cycle(RIGHT, 3)
+    PWM.set_duty_cycle(LEFT, 3)
 
 def right(signum, frame):
     PWM.set_duty_cycle(RIGHT, 10)
