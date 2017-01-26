@@ -15,11 +15,14 @@ from time import sleep
 
 print "Starting sumoServo process"
 pid = os.getpid()
-pin = sys.argv
-print(str(pin[1]) +' '+ str(pin[2]))
+#pin = sys.argv
+#print(str(pin[1]) +' '+ str(pin[2]))
 
-RIGHT = pin[1]
-LEFT = pin[2]
+#RIGHT = pin[1]
+#LEFT = pin[2]
+
+RIGHT = "LCD-CLK"
+LEFT = "LCD-D23"
 
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
