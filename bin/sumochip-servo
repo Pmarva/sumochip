@@ -47,7 +47,7 @@ def forward(signum, frame):
 
 def backward(signum, frame):
     PWM.set_duty_cycle(RIGHT, RW_DUTY)
-    PWM.set_duty_cycle(LEFT, FK_DUTY)
+    PWM.set_duty_cycle(LEFT, FW_DUTY)
 
 def stop(signum, frame):
     PWM.set_duty_cycle(RIGHT, 0)
