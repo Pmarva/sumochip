@@ -17,15 +17,15 @@ position = {
 }
 
 
-//var timer = 0;
+var timer = 0;
 
 init();
 
 function init() {
+
     switchToBlockly();
     document.getElementById("content").style.display = "initial";
     document.getElementById("loading").style.display = "none";
-
     injectBlockly(); // Silveri kood mostly
     injectCodemirror();
     wsConnect();
@@ -175,13 +175,13 @@ function setOnClickFunctions() {
 
 // nuppude korral websocket message serverile
 function move(command) {
-    //if(performance.now()-timer > 300 || command == 0) {
+    if(performance.now()-timer > 300 || command == 0) {
         socket.send(command);
         
-//        if(command!=0) {
-//            timer = performance.now();
-//        }
-    //}
+        if(command!=0) {
+            timer = performance.now();
+        }
+    }
 };
 
 function stop(){
@@ -195,16 +195,22 @@ function isEnemy(value){
 };
 function uploadCode() {
     if (mode == modes.BLOCKLY) {
-            socket.send(Blockly.Python.workspaceToCode(workspace));    
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml_text = Blockly.Xml.domToText(xml);
+            window.localStorage.setItem("sumochip-code", xml_text);
+            socket.send(Blockly.Python.workspaceToCode(workspace));
     }
+
     if (mode == modes.CODEMIRROR) {
         socket.send(codemirror.getValue());
     }
 };
+
 function getSavedCode() {
     socket.send('getSavedCode');
 };
 function runCode() {
+    uploadCode();
     document.getElementById('robotimg').src = '/static/img/robot-evil.png';
     socket.send('executeCode');
 }
@@ -227,6 +233,7 @@ function switchToBlockly() {
     document.getElementById("program").style.display = "initial";
     mode = modes.BLOCKLY;
 
+   
 }
 function switchToCodemirror() {
     document.getElementById("blockly").style.display = "none";
@@ -368,7 +375,17 @@ function injectBlockly() {
 			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block>' +
 			'<block type="sumorobot_delay"></block></xml>'
     });
+
+    getSavedCodeBlockly();
     
+}
+
+function getSavedCodeBlockly() {
+     if(!(localStorage.getItem("sumochip-code") === null)) {
+        xml_text = window.localStorage.getItem("sumochip-code");
+        var xml = Blockly.Xml.textToDom(xml_text);
+        Blockly.Xml.domToWorkspace(workspace, xml);
+    }
 }
 
 function injectCodemirror() {

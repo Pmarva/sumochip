@@ -24,6 +24,9 @@ pid = os.getpid()
 RIGHT = "LCD-CLK"
 LEFT = "LCD-D23"
 
+FW_DUTY = 5
+RW_DUTY = 10
+
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
 
@@ -38,46 +41,25 @@ unexport(119)
 PWM.start(RIGHT, 0, 50) #parem ratas
 PWM.start(LEFT, 0, 50) #vasak ratas
 
-
-
-
-#def fwd1(signum, frame): PWM.set_duty_cycle("LCD-CLK", 5)
-#def rev1(signum, frame): PWM.set_duty_cycle("LCD-CLK", 10)
-#def stop1(signum, frame): PWM.set_duty_cycle("LCD-CLK", 0)
-#def fwd2(signum, frame): PWM.set_duty_cycle("LCD-D23", 10)
-#def rev2(signum, frame): PWM.set_duty_cycle("LCD-D23", 5)
-#def stop2(signum, frame): PWM.set_duty_cycle("LCD-D23", 0)
-
 def forward(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 3)
-    PWM.set_duty_cycle(LEFT, 10)
+    PWM.set_duty_cycle(RIGHT, FW_DUTY)
+    PWM.set_duty_cycle(LEFT, RW_DUTY)
 
 def backward(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 10)
-    PWM.set_duty_cycle(LEFT, 3)
+    PWM.set_duty_cycle(RIGHT, RW_DUTY)
+    PWM.set_duty_cycle(LEFT, FK_DUTY)
 
 def stop(signum, frame):
     PWM.set_duty_cycle(RIGHT, 0)
     PWM.set_duty_cycle(LEFT, 0)
 
 def left(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 3)
-    PWM.set_duty_cycle(LEFT, 3)
+    PWM.set_duty_cycle(RIGHT, FW_DUTY)
+    PWM.set_duty_cycle(LEFT, FW_DUTY)
 
 def right(signum, frame):
-    PWM.set_duty_cycle(RIGHT, 10)
-    PWM.set_duty_cycle(LEFT, 10)
-
-
-#PAREM RATAS
-#signal.signal(30, fwd1)
-#signal.signal(10, rev1)
-#signal.signal(16, stop1)
-
-#VASAK RATAS
-#signal.signal(31, fwd2)
-#signal.signal(12, rev2)
-#signal.signal(17, stop2)
+    PWM.set_duty_cycle(RIGHT, RW_DUTY)
+    PWM.set_duty_cycle(LEFT, RW_DUTY)
 
 signal.signal(30, forward)
 signal.signal(10, backward)

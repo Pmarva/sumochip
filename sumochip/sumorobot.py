@@ -48,32 +48,6 @@ class AttributeDict(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
 
-#class ChipIOMotor(object):
-#    _speed = 0
-
-#    def __init__(self, pin, freq=50, duty_min=5, duty_max=10, stop_on_zero=False):
-#        self.pin = pin
-#        self.freq = freq
-#        self.duty_min = duty_min
-#        self.duty_max = duty_max
-#        self.stop_on_zero = stop_on_zero
-#        sleep(0.1)
-#        PWM.start(pin, 0, freq)
-
-#    @property
-#    def speed(self):
-#        return self._speed
-
-#    @speed.setter
-#    def speed(self, val):
-#        self._speed = val
-#        if val == 0 and not self.stop_on_zero:
-#            duty = 0
-#        else:
-#            duty = int(map(val, -1.0, 1.0, self.duty_min, self.duty_max))
-#        PWM.set_duty_cycle(self.pin, duty)
-
-
 class ChipIOPin(object):
 
     def __init__(self, pin):
@@ -140,33 +114,6 @@ class NoIOPin(object):
     """Stub class for I/O pins that don't have a real gpio pin"""
     pin = None
     value = 0
-
-
-#class PythonIOMotor(Thread): # This class generated PWM signal necessary for servo motors
-#    def __init__(self, pin=192):
-#        Thread.__init__(self)
-#        self.path = "/sys/class/gpio/gpio{}".format(pin)
-#        if not os.path.exists(self.path):
-#            with open("/sys/class/gpio/export", "w") as fh:
-#                fh.write(str(pin))
-#        with open(os.path.join(self.path, "direction"), "w") as fh:
-#            fh.write("out")
-#        self.speed = 0
-#        self.daemon = True
-#        self.start()
-#    def run(self):
-#        print("run")
-#        with open(os.path.join(self.path, "value"), "w") as fh:
-#          while True:
-#            if self.speed:
-#                fh.write("1")
-#                fh.flush()
-#                sleep(0.002 if self.speed > 0 else 0.001)
-#                fh.write("0")
-#                fh.flush()
-#                sleep(0.018 if self.speed > 0 else 0.019)
-#            else:
-#                sleep(0.020)
 
 class IOPollThread(Thread):
     """Polls the IO pins"""
@@ -268,30 +215,6 @@ class Sumorobot(object):
             except NoOptionError:
                 stop_on_zero = False
 
-#            if "motor_left" in chip_io_pins:
-#                unexport(config.get("PythonIO", "motor_left"))
-#                try:
-#                    freq, duty_min, duty_max = config.get("ChipIO", "motor_left_cal").split(",")
-#                except NoOptionError:
-#                    freq, duty_min, duty_max = 500, 49, 90
-
-#                self.motor_left = ChipIOMotor(config.get("ChipIO", "motor_left"),
-#                                             int(freq), float(duty_min), float(duty_max),
-#                                             stop_on_zero)
-#                self.motor_left = config.get("ChipIO", "motor_left")
-#                chip_io_pins.remove("motor_left")
-#            if "motor_right" in chip_io_pins:
-#                unexport(config.get("PythonIO", "motor_right"))
-#                try:
-#                    freq, duty_min, duty_max = config.get("ChipIO", "motor_right_cal").split(",")
-#                except NoOptionError:
-#                    freq, duty_min, duty_max = 500, 49, 90
-#                self.motor_right = ChipIOMotor(config.get("ChipIO", "motor_right"),
-#                                            int(freq), float(duty_min), float(duty_max),
-#                                            stop_on_zero)
-#                self.motor_right = config.get("ChipIO", "motor_right")
-#                chip_io_pins.remove("motor_right")
-
             for pin_name in chip_io_pins:
                 unexport(config.get("PythonIO", pin_name))
                 self.io[pin_name] = ChipIOPin(config.get("ChipIO", pin_name))
@@ -307,14 +230,6 @@ class Sumorobot(object):
             python_io_pins -= used_pins
             print("PythonIO pins: ", ", ".join(str(pin) for pin in python_io_pins))
             non_python_io_pins = non_chip_io_pins - python_io_pins
-
-#            if "motor_left" in python_io_pins:
-#                self.motor_left = PythonIOMotor(config.get("PythonIO", "motor_left"))
-#                python_io_pins.remove("motor_left")
-
-#            if "motor_right" in python_io_pins:
-#                self.motor_right = PythonIOMotor(config.get("PythonIO", "motor_right"))
-#                python_io_pins.remove("motor_right")
 
             for pin_name in python_io_pins:
                 self.io[pin_name] = PythonIOPin(config.get("PythonIO", pin_name))
@@ -372,29 +287,18 @@ class Sumorobot(object):
 
 
     def forward(self):
-#        self.motor_left.speed = 1
-#        self.motor_right.speed = -1
         os.kill(self.sumoServoPid,30)
-        #os.kill(self.sumoServoPid,31)
+
     def back(self):
-#        self.motor_left.speed = -1
-#        self.motor_right.speed = 1
         os.kill(self.sumoServoPid,10)
-        #os.kill(self.sumoServoPid,12)
+
     def stop(self):
-#        self.motor_left.speed = 0
-#        self.motor_right.speed = 0
         os.kill(self.sumoServoPid,16)
-        #os.kill(self.sumoServoPid,17)
+
     def right(self):
-#        self.motor_left.speed = 1
-#        self.motor_right.speed = 1
-        #os.kill(self.sumoServoPid,10)
         os.kill(self.sumoServoPid,31)
+
     def left(self):
-#        self.motor_left.speed = -1
-#        self.motor_right.speed = -1
-        #os.kill(self.sumoServoPid,30)
         os.kill(self.sumoServoPid,12)
 
     @property
@@ -430,9 +334,9 @@ class Sumorobot(object):
 
     def isLine(self, value):
         if value == 'LEFT':
-            return (not self.line_left.value) ^ self.lineColor
+            return not self.line_left.value ^ self.lineColor
         elif value == 'RIGHT':
-            return (not self.line_right.value) ^ self.lineColor
+            return not self.line_right.value ^ self.lineColor
         elif value == 'FRONT':
             test = not self.line_front.value ^ self.lineColor
             #test = (not self.line_front.value) ^ self.lineColor
@@ -467,9 +371,9 @@ class SensorThread(Thread):
 
         right = not s.enemy_right.value
         left = not s.enemy_left.value
-        line_right = (not s.line_right.value) ^ s.lineColor
-        line_front = (not s.line_front.value) ^ s.lineColor
-        line_left = (not s.line_left.value) ^ s.lineColor
+        line_right = not s.line_right.value ^ s.lineColor
+        line_front = not s.line_front.value ^ s.lineColor
+        line_left = not s.line_left.value ^ s.lineColor
 
         s.blue_led.value = not left
         s.green_led.value = not right
