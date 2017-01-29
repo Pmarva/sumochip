@@ -24,8 +24,8 @@ pid = os.getpid()
 RIGHT = "LCD-CLK"
 LEFT = "LCD-D23"
 
-FW_DUTY = 5
-RW_DUTY = 10
+FW_DUTY = 1
+RW_DUTY = 8
 
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
