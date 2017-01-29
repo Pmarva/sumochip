@@ -84,6 +84,8 @@ Documentation=https://github.com/laurivosandi/sumochip
 AssertPathExists=/etc/sumorobot/sumorobot.ini
 After=sumochip-servo.service
 Requires=sumochip-servo.service
+PartOf=sumochip-servo.service
+
 
 
 [Service]
