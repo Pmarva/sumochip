@@ -340,7 +340,7 @@ class Sumorobot(object):
         elif value == 'FRONT':
             test = not self.line_front.value ^ self.lineColor
             #test = (not self.line_front.value) ^ self.lineColor
-            print("Ees joone j22rtus: "+str(test))
+            #print("Ees joone j22rtus: "+str(test))
             return test
 
 
@@ -374,15 +374,26 @@ class SensorThread(Thread):
         line_right = not s.line_right.value ^ s.lineColor
         line_front = not s.line_front.value ^ s.lineColor
         line_left = not s.line_left.value ^ s.lineColor
+        print("Line right "+ str(line_right))
 
-        s.blue_led.value = not left
-        s.green_led.value = not right
+#        s.blue_led.value = not left
+#        s.green_led.value = not right
 
-        if line_front:
-            s.red_led.value = s.yellow_led.value = not line_front
+#        if line_front:
+#            s.red_led.value = s.yellow_led.value = not line_front
+#        else:
+#            s.red_led.value = not line_left
+#            s.yellow_led.value = not line_right
+        if s.sensor_power== True:
+            s.green_led.value = 1 if not line_right else 0
+            s.yellow_led.value = 1 if not line_front else 0
+            s.red_led.value = 1 if not line_front else 0
+            s.blue_led.value = 1 if not line_left else 0
         else:
-            s.red_led.value = not line_left
-            s.yellow_led.value = not line_right
+            s.green_led.value = 1
+            s.yellow_led.value = 1
+            s.red_led.value = 1
+            s.blue_led.value = 1
 
         stats["enemy_right"] = 1 if right else 0
         stats["enemy_left"] = 1 if left else 0
