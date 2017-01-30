@@ -40,10 +40,10 @@ EOF
 
 case $(uname -r) in
     4.4.*)
-        echo "green_led = 1022" >> /etc/sumorobot/sumorobot.ini
-        echo "yellow_led = 1020" >> /etc/sumorobot/sumorobot.ini
-        echo "red_led = 1018" >> /etc/sumorobot/sumorobot.ini
-        echo "blue_led = 1016" >> /etc/sumorobot/sumorobot.ini
+        echo "green_led = 1019" >> /etc/sumorobot/sumorobot.ini
+        echo "yellow_led = 1017" >> /etc/sumorobot/sumorobot.ini
+        echo "red_led = 1015" >> /etc/sumorobot/sumorobot.ini
+        echo "blue_led = 1013" >> /etc/sumorobot/sumorobot.ini
     ;;
     4.3.*)
         echo "green_led = 408" >> /etc/sumorobot/sumorobot.ini

@@ -370,10 +370,10 @@ function injectBlockly() {
         scrollbars: true,
         toolbox: '<xml id="toolbox" style="display: none;">' +
 			'<block type="controls_if"></block>' +
+            '<block type="sumorobot_delay"></block>' +
 			'<block type="sumorobot_move"><title name="MOVE">forward</title></block>' +
 			'<block type="sumorobot_enemy"><title name="ENEMY">FRONT</title></block>' +
-			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block>' +
-			'<block type="sumorobot_delay"></block></xml>'
+			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block></xml>'
     });
 
     getSavedCodeBlockly();
