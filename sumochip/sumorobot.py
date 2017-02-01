@@ -374,7 +374,6 @@ class SensorThread(Thread):
         line_right = not s.line_right.value ^ s.lineColor
         line_front = not s.line_front.value ^ s.lineColor
         line_left = not s.line_left.value ^ s.lineColor
-        print("Line right "+ str(line_right))
 
 #        s.blue_led.value = not left
 #        s.green_led.value = not right

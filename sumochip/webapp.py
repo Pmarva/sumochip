@@ -111,6 +111,10 @@ def command(ws):
             sumorobot.sensor_power = False
             os.system("poweroff")
             print("Robot suletakse")
+        elif command == 'sensorPowerOn':
+            sumorobot.sensor_power = True
+        elif command == 'sensorPowerOff':
+            sumorobot.sensor_power = False
         elif command == None:
             print("WTF")
         else:

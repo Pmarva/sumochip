@@ -232,8 +232,9 @@ function switchToBlockly() {
     document.getElementById("manual").style.display = "none";
     document.getElementById("program").style.display = "initial";
     mode = modes.BLOCKLY;
-
-   
+    if(typeof socket !== 'undefined') {
+        socket.send('sensorPowerOff');
+    }
 }
 function switchToCodemirror() {
     document.getElementById("blockly").style.display = "none";
@@ -264,6 +265,7 @@ function switchToManual() {
     document.getElementById("manual").style.display = "initial";
     mode = modes.MANUAL;
     stopCode();
+    socket.send('sensorPowerOn');
 }
 
 function injectBlockly() {
@@ -370,10 +372,10 @@ function injectBlockly() {
         scrollbars: true,
         toolbox: '<xml id="toolbox" style="display: none;">' +
 			'<block type="controls_if"></block>' +
+            '<block type="sumorobot_delay"></block>' +
 			'<block type="sumorobot_move"><title name="MOVE">forward</title></block>' +
 			'<block type="sumorobot_enemy"><title name="ENEMY">FRONT</title></block>' +
-			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block>' +
-            '<block type="sumorobot_delay"></block></xml>'
+			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block></xml>'
     });
 
     getSavedCodeBlockly();
