@@ -56,6 +56,7 @@ def command(ws):
     global codeThread
     global codeText
     global codeBytecode
+    global codeSaved
     while not ws.closed:
         command = ws.receive()
         if command:
