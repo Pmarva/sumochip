@@ -20,7 +20,8 @@
     </head>
     <body>
         <form>
-            <input type="text" name="ip">
+            <input type="text" name="ip" placeholder="ip aadress või hostname">
+            <input type="text" name="nimi" placeholder="võistleja nimi">
             <input type="submit" value="Lisa robot">
         </form>
             <button onClick="startAllRobots()">Käivitage kõik robotid.</button>
@@ -31,6 +32,7 @@
 <!--        <button onClick="runCode()">Start robot</button>-->
         <table id="robots" border="1">
             <tr>
+                <th>Nimi</th>
                 <th>Robot</th>
                 <th>Start</th>
                 <th>Stop</th>
@@ -89,10 +91,12 @@
                 console.log("connected");
                 //socketStatus.innerHTML = 'ühendatud';
                 console.log(event);
+                var nimi = $("input[name*='nimi']").val()
                 if(indexFromUser == null) {
-                    $('#robots tr:last').after("<tr class='robot'><td>"+host+"</td>"+
+                    $('#robots tr:last').after("<tr class='robot'><td>"+nimi+"</td>"+
+                                               "<td>"+host+"</td>"+
                                                "<td><button onClick=runCode("+index+")>Käivita robot</button></td>"+
-                                               "<td><button onClick=stopp("+index+")>Seiske robot</button></td>"+
+                                               "<td><button onClick=stopp("+index+")>Seiska robot</button></td>"+
                                                "<td data-id="+index+" class='status green'><button onClick=wsConnect('"+host+"','"+index+"') style='display: none'>Ühenda uuesti</button></td></tr>");
                     //socketStatus.className = 'connected';
                     // start andurite näitude saatmist:
