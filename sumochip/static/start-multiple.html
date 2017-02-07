@@ -1,0 +1,138 @@
+<!Doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <style>
+            .status {
+                color:red;
+                
+            }
+            .green {
+                background-color:green;
+            }
+
+            .red {
+                color:red;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <input type="text" name="ip">
+            <input type="submit" value="Lisa robot">
+        </form>
+            <button onClick="startAllRobots()">Käivitage kõik robotid.</button>
+            <button onClick="stopAllRobots()">Seisake kõik robotid.</button>
+<!--            <button onClick="wsConnect('192.168.11.9')">K2ivita websocket robot</button>-->
+<!--        <button onClick="soidaEdasi()">soida edasi</button>-->
+<!--            <button onClick="stopp()">stopp robot thread</button>-->
+<!--        <button onClick="runCode()">Start robot</button>-->
+        <table id="robots" border="1">
+            <tr>
+                <th>Robot</th>
+                <th>Start</th>
+                <th>Stop</th>
+                <th>Ühendus</th>
+            </tr>
+        </table>
+    <script>
+        var socketList = [];
+        var socket = null;
+
+        function startSensors() {
+            //alert("test");
+            //socket.send('executeCode');
+            socketList[1].send("sensors");
+        };
+
+        function runCode(index) {
+            socketList[index].send('executeCode');
+        }
+
+        function soidaEdasi() {
+            socket.send('1');
+        }
+
+        function stopp(index) {
+            socketList[index].send('stopCode');
+        }
+
+        function startAllRobots() {
+            for(var i=0; i<socketList.length; i++) {
+                socketList[i].send('executeCode');
+            }
+        }
+
+        function stopAllRobots() {
+            for(var i=0; i<socketList.length; i++) {
+                socketList[i].send('stopCode');
+            }
+        }
+ 
+        function wsConnect(host, indexFromUser=null) {
+            //var socketStatus = document.getElementById("socketStatus");
+            console.log(host);
+            socket = new WebSocket('ws://'+host);
+            var index
+
+            if(indexFromUser == null){
+                index =socketList.length
+            } else {
+                index = indexFromUser
+            }
+             
+            socketList[index]=socket;
+
+            socketList[index].onopen = function (event) {
+                console.log("connected");
+                //socketStatus.innerHTML = 'ühendatud';
+                console.log(event);
+                if(indexFromUser == null) {
+                    $('#robots tr:last').after("<tr class='robot'><td>"+host+"</td>"+
+                                               "<td><button onClick=runCode("+index+")>Käivita robot</button></td>"+
+                                               "<td><button onClick=stopp("+index+")>Seiske robot</button></td>"+
+                                               "<td data-id="+index+" class='status green'><button onClick=wsConnect('"+host+"','"+index+"') style='display: none'>Ühenda uuesti</button></td></tr>");
+                    //socketStatus.className = 'connected';
+                    // start andurite näitude saatmist:
+                    //socket.send('sensors');
+                } else {
+                    var elm = $(".status:eq( "+index+" )");
+                    elm.toggleClass( "green" );
+                    elm.toggleClass( "red" );
+                    elm.find( "button" ).toggle();
+                }
+               socketList[index].send('sensors')
+            };
+            socketList[index].onerror = function (error) {
+                console.log('WebSocket Error: ');
+                console.log(error);
+            };
+            socketList[index].onclose = function (event) {
+                console.log(event);
+                console.log(index)
+                var elm = $(".status:eq( "+index+" )");
+
+                if(!elm.hasClass( "red" )) {
+                    elm.toggleClass("green");
+                    elm.toggleClass("red");
+                    elm.find('button').toggle();
+                    //socketStatus.innerHTML = "ühendus puudub";
+                    //socketStatus.className = 'disconnected';
+                }
+            };  
+
+            socketList[index].onmessage = function(event){
+                    console.log(event);
+            };
+        };
+
+        $("form").submit(function(event) {
+            wsConnect($("input[name*='ip']").val())
+            event.preventDefault();
+        });
+
+        </script>
+    </body>
+</html>
