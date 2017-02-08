@@ -30,8 +30,8 @@ h1 {
 }
 #pages {
     position:relative;
-    top:-170px;
     background-color:#fff;
+	top:-50px;
 }
 #switchProg {
     position:absolute;
@@ -246,5 +246,48 @@ h1 {
 	padding:6px 24px;
 	text-decoration:none;
 	text-shadow:0px -1px 0px #5b6178;
+}
+
+.rakettLogo {
+	display:inline-block;
+	position:relative;
+}
+
+.itcollegeLogo {
+	float:left;
+	top:70px;
+	left:-70px;
+	display:inline-block;
+	position:relative;
+	/*background-color:#eceded;*/
+	background-color:white;
+	padding:25px;
+	padding-left:0px;
+	z-index:100;
+	border-bottom-right-radius:2em;
+	border-bottom-left-radius:2em; 
+}
+
+
+#logoWrapper {
+	position:relative;
+	display:inline-block;
+	width:800px;
+	left:-30px;
+	top:-110px;
+}
+
+#Name {
+	position:relative;
+	display:inline-block;
+	float:left;
+	font-family:Tahoma;
+	font-size:1.3em;
+	font-weight:bold;
+	color:white;
+	background-color:#BBBBBB;
+	padding:0.5em;
+	border-bottom-right-radius:0.5em;
+	top:-8px
 }
 
