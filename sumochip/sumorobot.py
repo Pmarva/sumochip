@@ -167,6 +167,7 @@ class Sumorobot(object):
         self.io = AttributeDict()
         self.io_proxies = {}
         self.config = config = ConfigParser()
+        self.name = 'No name'
         if not config_file:
             if os.path.exists("/etc/sumorobot/sumorobot.ini"):
                 config_file = "/etc/sumorobot/sumorobot.ini"
@@ -200,7 +201,7 @@ class Sumorobot(object):
             else:
                 self.axp209 = None
             self.lineColor = config.getint("sumorobot", "blackLine")
-
+            self.name = config.get("sumorobot","voistlejaNimi")
 
         if "ChipIO" in config.sections() and (__use_chip_io__ or force_use_chip_io):
             print("Using ChipIO")

@@ -116,6 +116,8 @@ def command(ws):
             sumorobot.sensor_power = True
         elif command == 'sensorPowerOff':
             sumorobot.sensor_power = False
+        elif command == 'getName':
+            ws.send(json.dumps({'Name':sumorobot.name}))
         elif command == None:
             print("WTF")
         else:

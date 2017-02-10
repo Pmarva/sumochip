@@ -17,6 +17,7 @@ port = 80
 [sumorobot]
 axp209 = 0
 blackline = 0
+voistlejaNimi = No Name
 switchDutyCycle = 0
 
 [ChipIO]
