@@ -280,7 +280,7 @@ function injectBlockly() {
 				.appendField(new Blockly.FieldDropdown(this.VALUES), 'MOVE');
             this.setPreviousStatement(true);
             this.setNextStatement(true);
-            this.setTooltip('move to chosen direction');
+            this.setTooltip('Liigu valitud suunas.');
 
         }
     };
@@ -308,7 +308,7 @@ function injectBlockly() {
 				.appendField(new Blockly.FieldTextInput('1', Blockly.FieldTextInput.numberValidator), 'DELAY');
             this.setPreviousStatement(true);
             this.setNextStatement(true);
-            this.setTooltip('continue moving to chosen direction');
+            this.setTooltip('Viivitus');
         }
     };
     Blockly.JavaScript.sumorobot_delay = function () {
@@ -327,7 +327,7 @@ function injectBlockly() {
             this.appendDummyInput()
 				.appendField(new Blockly.FieldDropdown(this.VALUES), 'ENEMY');
             this.setOutput(true, 'Boolean');
-            this.setTooltip('detect enemy');
+            this.setTooltip('Vastase tuvastus');
         }
     };
     Blockly.Blocks.sumorobot_enemy.VALUES =
@@ -349,7 +349,7 @@ function injectBlockly() {
             this.appendDummyInput()
 				.appendField(new Blockly.FieldDropdown(this.VALUES), 'LINE');
             this.setOutput(true, 'Boolean');
-            this.setTooltip('detect line');
+            this.setTooltip('Joone tuvastus');
         }
     };
     Blockly.Blocks.sumorobot_line.VALUES =
@@ -375,7 +375,9 @@ function injectBlockly() {
             '<block type="sumorobot_delay"></block>' +
 			'<block type="sumorobot_move"><title name="MOVE">forward</title></block>' +
 			'<block type="sumorobot_enemy"><title name="ENEMY">FRONT</title></block>' +
-			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block></xml>'
+			'<block type="sumorobot_line"><title name="LINE">FRONT</title></block>' +
+            '<block type="logic_operation"></block>' +
+            '<block type="logic_negate"></block></xml>'
     });
 
     getSavedCodeBlockly();

@@ -1,8 +1,9 @@
 /**
+ * @license
  * Visual Blocks Language
  *
- * Copyright 2012 Google Inc.
- * http://blockly.googlecode.com/
+ * Copyright 2016 Google Inc.
+ * https://developers.google.com/blockly/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,7 @@
 
 /**
  * @fileoverview Generating Lua for procedure blocks.
- * @author fraser@google.com (Neil Fraser)
+ * @author rodrigoq@google.com (Rodrigo Queiro)
  */
 'use strict';
 
@@ -30,12 +31,17 @@ goog.require('Blockly.Lua');
 
 Blockly.Lua['procedures_defreturn'] = function(block) {
   // Define a procedure with a return value.
-  var funcName = Blockly.Lua.variableDB_.getName(block.getTitleValue('NAME'),
-      Blockly.Procedures.NAME_TYPE);
+  var funcName = Blockly.Lua.variableDB_.getName(
+      block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
   var branch = Blockly.Lua.statementToCode(block, 'STACK');
+  if (Blockly.Lua.STATEMENT_PREFIX) {
+    branch = Blockly.Lua.prefixLines(
+        Blockly.Lua.STATEMENT_PREFIX.replace(/%1/g,
+        '\'' + block.id + '\''), Blockly.Lua.INDENT) + branch;
+  }
   if (Blockly.Lua.INFINITE_LOOP_TRAP) {
     branch = Blockly.Lua.INFINITE_LOOP_TRAP.replace(/%1/g,
-        '"' + block.id + '"') + branch;
+        '\'' + block.id + '\'') + branch;
   }
   var returnValue = Blockly.Lua.valueToCode(block, 'RETURN',
       Blockly.Lua.ORDER_NONE) || '';
@@ -45,14 +51,15 @@ Blockly.Lua['procedures_defreturn'] = function(block) {
     branch = '';
   }
   var args = [];
-  for (var x = 0; x < block.arguments_.length; x++) {
-    args[x] = Blockly.Lua.variableDB_.getName(block.arguments_[x],
+  for (var i = 0; i < block.arguments_.length; i++) {
+    args[i] = Blockly.Lua.variableDB_.getName(block.arguments_[i],
         Blockly.Variables.NAME_TYPE);
   }
   var code = 'function ' + funcName + '(' + args.join(', ') + ')\n' +
       branch + returnValue + 'end\n';
   code = Blockly.Lua.scrub_(block, code);
-  Blockly.Lua.definitions_[funcName] = code;
+  // Add % so as not to collide with helper functions in definitions list.
+  Blockly.Lua.definitions_['%' + funcName] = code;
   return null;
 };
 
@@ -63,12 +70,12 @@ Blockly.Lua['procedures_defnoreturn'] =
 
 Blockly.Lua['procedures_callreturn'] = function(block) {
   // Call a procedure with a return value.
-  var funcName = Blockly.Lua.variableDB_.getName(block.getTitleValue('NAME'),
-      Blockly.Procedures.NAME_TYPE);
+  var funcName = Blockly.Lua.variableDB_.getName(
+      block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
   var args = [];
-  for (var x = 0; x < block.arguments_.length; x++) {
-    args[x] = Blockly.Lua.valueToCode(block, 'ARG' + x,
-        Blockly.Lua.ORDER_NONE) || 'None';
+  for (var i = 0; i < block.arguments_.length; i++) {
+    args[i] = Blockly.Lua.valueToCode(block, 'ARG' + i,
+        Blockly.Lua.ORDER_NONE) || 'nil';
   }
   var code = funcName + '(' + args.join(', ') + ')';
   return [code, Blockly.Lua.ORDER_HIGH];
@@ -76,12 +83,12 @@ Blockly.Lua['procedures_callreturn'] = function(block) {
 
 Blockly.Lua['procedures_callnoreturn'] = function(block) {
   // Call a procedure with no return value.
-  var funcName = Blockly.Lua.variableDB_.getName(block.getTitleValue('NAME'),
-      Blockly.Procedures.NAME_TYPE);
+  var funcName = Blockly.Lua.variableDB_.getName(
+      block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
   var args = [];
-  for (var x = 0; x < block.arguments_.length; x++) {
-    args[x] = Blockly.Lua.valueToCode(block, 'ARG' + x,
-        Blockly.Lua.ORDER_NONE) || 'None';
+  for (var i = 0; i < block.arguments_.length; i++) {
+    args[i] = Blockly.Lua.valueToCode(block, 'ARG' + i,
+        Blockly.Lua.ORDER_NONE) || 'nil';
   }
   var code = funcName + '(' + args.join(', ') + ')\n';
   return code;
@@ -90,11 +97,11 @@ Blockly.Lua['procedures_callnoreturn'] = function(block) {
 Blockly.Lua['procedures_ifreturn'] = function(block) {
   // Conditionally return value from a procedure.
   var condition = Blockly.Lua.valueToCode(block, 'CONDITION',
-      Blockly.Lua.ORDER_NONE) || 'False';
+      Blockly.Lua.ORDER_NONE) || 'false';
   var code = 'if ' + condition + ' then\n';
   if (block.hasReturnValue_) {
     var value = Blockly.Lua.valueToCode(block, 'VALUE',
-        Blockly.Lua.ORDER_NONE) || 'None';
+        Blockly.Lua.ORDER_NONE) || 'nil';
     code += '  return ' + value + '\n';
   } else {
     code += '  return\n';

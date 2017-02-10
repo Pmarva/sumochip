@@ -38,3 +38,18 @@ Blockly.Msg.CONTROLS_SUMOROBOT_LINE_LEFT = "joon vasak";
 Blockly.Msg.CONTROLS_SUMOROBOT_LINE_FRONT = "joon ees";
 Blockly.Msg.CONTROLS_SUMOROBOT_LINE_RIGHT = "joon parem";
 Blockly.Msg.CONTROLS_SUMOROBOT_DELAY = "viivitus";
+
+
+Blockly.Msg.LOGIC_OPERATION_AND = "ja";
+Blockly.Msg.LOGIC_OPERATION_HELPURL = "https://github.com/google/blockly/wiki/Logic#logical-operations";  // untranslated
+Blockly.Msg.LOGIC_OPERATION_OR = "või";
+Blockly.Msg.LOGIC_OPERATION_TOOLTIP_AND = "Tagastab „tõene“, kui mõlemad avaldised on tõesed.";
+Blockly.Msg.LOGIC_OPERATION_TOOLTIP_OR = "Tagastab „tõene“, kui vähemalt üks avaldistest on tõene.";
+
+Blockly.Msg.LOGIC_NEGATE_HELPURL = "https://github.com/google/blockly/wiki/Logic#not";  // untranslated
+Blockly.Msg.LOGIC_NEGATE_TITLE = "pole %1";
+Blockly.Msg.LOGIC_NEGATE_TOOLTIP = "Tagastab „tõene“, kui avaldis on väär. Tagastab „väär“, kui avaldis on tõene.";
+
+
+
+
