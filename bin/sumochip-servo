@@ -5,8 +5,10 @@ from CHIP_IO import SOFTPWM as PWM
 import sys
 import signal
 import os
-
 from time import sleep
+from ConfigParser import SafeConfigParser as ConfigParser
+from ConfigParser import NoOptionError, NoSectionError
+import codecs
 
 # 5% duty -- 1ms forward
 # 7.5 duty -- 1.5ms stop
@@ -21,11 +23,22 @@ pid = os.getpid()
 #RIGHT = pin[1]
 #LEFT = pin[2]
 
-RIGHT = "LCD-CLK"
-LEFT = "LCD-D23"
+config_file = '/etc/sumorobot/sumorobot.ini'
+config = ConfigParser()
+
+with codecs.open(config_file, 'r', encoding='utf-8') as fh:
+    config.readfp(fh)
+#config.read(config_file, encoding='utf-8')
+switchMotors = config.getint("sumorobot","switchDutyCycle")
+RIGHT = config.get("ChipIO","motor_right")
+LEFT = config.get("ChipIO","motor_left")
 
 FW_DUTY = 1
 RW_DUTY = 8
+
+if switchMotors:
+    FW_DUTY, RW_DUTY = RW_DUTY, FW_DUTY
+    
 
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
@@ -35,8 +48,11 @@ def unexport(pin):
         with open("/sys/class/gpio/unexport", "w") as fh:
                 fh.write(str(pin))
 
-unexport(120)
-unexport(119)
+#Unexport motor right pin
+unexport(config.getint("PythonIO","motor_right"))
+
+#Unexport motor left pin
+unexport(config.getint("PythonIO","motor_left"))
 
 PWM.start(RIGHT, 0, 50) #parem ratas
 PWM.start(LEFT, 0, 50) #vasak ratas

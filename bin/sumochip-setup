@@ -17,19 +17,20 @@ port = 80
 [sumorobot]
 axp209 = 0
 blackline = 0
+switchDutyCycle = 0
 
 [ChipIO]
 motor_stop_on_zero_speed = false
 motor_left_cal =  50, 1, 8
 motor_right_cal = 50, 1, 8
-#motor_left = LCD-D23
-#motor_right = LCD-CLK
+motor_left = LCD-D23
+motor_right = LCD-CLK
 enemy_left = CSID3
 enemy_right = CSID5
 
 [PythonIO]
-#motor_left = 119
-#motor_right = 120
+motor_left = 119
+motor_right = 120
 sensor_power = 122
 enemy_left = 135
 enemy_right = 137
