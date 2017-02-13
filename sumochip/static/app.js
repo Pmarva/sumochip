@@ -42,6 +42,7 @@ function wsConnect() {
         socketStatus.className = 'connected';
         // start andurite näitude saatmist:
         socket.send('sensors');
+        socket.send('getName');
     };
     socket.onerror = function (error) {
         console.log('WebSocket Error: ');
@@ -107,7 +108,11 @@ function wsConnect() {
         }
         else {
                 document.getElementById('lineSensor').style.borderTop = '20px solid #555';
-        }        
+        }
+
+	if(msg.Name) {
+	       document.getElementById('Name').innerHTML=msg.Name;
+	}        
         //battery info
         document.getElementById('charge').style.width = msg.capacity +'%';
 
@@ -183,6 +188,11 @@ function move(command) {
         }
     }
 };
+
+
+function getName(){
+    socket.send("getName");
+}
 
 function stop(){
     move(direction.STOP);
