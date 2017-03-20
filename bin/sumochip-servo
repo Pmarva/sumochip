@@ -38,7 +38,7 @@ LEFT = config.get("ChipIO","motor_left")
 FW_DUTY = 1
 RW_DUTY = 8
 
-if switchMotors:
+if switchTurning:
     FW_DUTY, RW_DUTY = RW_DUTY, FW_DUTY
 
 if switchFwRw:

@@ -16,7 +16,7 @@ port = 80
 
 [sumorobot]
 axp209 = 0
-blackline = 1
+blackline = 0
 voistlejaNimi = No Name
 switchTurning = 0
 switchFwRw = 0
