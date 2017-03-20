@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="jquery.js"></script>
         <style>
             .status {
                 color:red;
@@ -107,7 +107,7 @@
                     elm.toggleClass( "red" );
                     elm.find( "button" ).toggle();
                 }
-               socketList[index].send('sensors')
+               //socketList[index].send('sensors')
             };
             socketList[index].onerror = function (error) {
                 console.log('WebSocket Error: ');

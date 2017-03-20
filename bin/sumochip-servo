@@ -29,7 +29,9 @@ config = ConfigParser()
 with codecs.open(config_file, 'r', encoding='utf-8') as fh:
     config.readfp(fh)
 #config.read(config_file, encoding='utf-8')
-switchMotors = config.getint("sumorobot","switchDutyCycle")
+switchTurning = config.getint("sumorobot","switchTurning")
+switchFwRw = config.getint("sumorobot","switchFwRw")
+
 RIGHT = config.get("ChipIO","motor_right")
 LEFT = config.get("ChipIO","motor_left")
 
@@ -38,7 +40,10 @@ RW_DUTY = 8
 
 if switchMotors:
     FW_DUTY, RW_DUTY = RW_DUTY, FW_DUTY
-    
+
+if switchFwRw:
+    RIGHT, LEFT = LEFT, RIGHT
+
 
 with open('/var/tmp/sumoServoPid.txt', 'w') as f:
     f.write(str(pid))
